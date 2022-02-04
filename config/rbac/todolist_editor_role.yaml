@@ -1,0 +1,24 @@
+# permissions for end users to edit todolists.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: todolist-editor-role
+rules:
+- apiGroups:
+  - application.workshop.com
+  resources:
+  - todolists
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - application.workshop.com
+  resources:
+  - todolists/status
+  verbs:
+  - get

@@ -1,0 +1,31 @@
+---
+# Source: todolist/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-todolist
+  labels:
+    helm.sh/chart: todolist-1.0.1
+    app.kubernetes.io/name: todolist
+    app.kubernetes.io/component: todolist
+    app.kubernetes.io/instance: workshop
+    app.kubernetes.io/part-of: todolist
+    deploymentconfig: workshop-todolist
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      name: 8080-tcp
+  selector:
+    app.kubernetes.io/name: todolist
+    app.kubernetes.io/component: todolist
+    app.kubernetes.io/instance: workshop
+    app.kubernetes.io/part-of: todolist
+    deploymentconfig: workshop-todolist
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,73 @@
+---
+# Source: todolist/templates/deploymentconfig.yaml
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    helm.sh/chart: todolist-1.0.1
+    app.kubernetes.io/name: todolist
+    app.kubernetes.io/component: todolist
+    app.kubernetes.io/instance: workshop
+    app.kubernetes.io/part-of: todolist
+    deploymentconfig: workshop-todolist
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+  name: workshop-todolist
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app.kubernetes.io/name: todolist
+    app.kubernetes.io/component: todolist
+    app.kubernetes.io/instance: workshop
+    app.kubernetes.io/part-of: todolist
+    deploymentconfig: workshop-todolist
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: todolist
+        app.kubernetes.io/component: todolist
+        app.kubernetes.io/instance: workshop
+        app.kubernetes.io/part-of: todolist
+        deploymentconfig: workshop-todolist
+    spec:
+      containers:
+      - image: "quay.io/rht-labs/do500-todolist:latest"
+        imagePullPolicy: Always
+        name: todolist
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:          
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10	
+          successThreshold: 1
+          timeoutSeconds: 1
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:    
+  test: false
+  triggers:
+  - type: ConfigChange

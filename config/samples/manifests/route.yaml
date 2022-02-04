@@ -1,0 +1,33 @@
+---
+# Source: todolist/templates/route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: workshop-todolist
+  labels:
+    helm.sh/chart: todolist-1.0.1
+    app.kubernetes.io/name: todolist
+    app.kubernetes.io/component: todolist
+    app.kubernetes.io/instance: workshop
+    app.kubernetes.io/part-of: todolist
+    deploymentconfig: workshop-todolist
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    haproxy.router.openshift.io/balance: "roundrobin"
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: workshop-todolist
+    weight: 100
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  wildcardPolicy: None
+status:
+  ingress:
+  - conditions:
+    - status: 'True'
+      type: Admitted
